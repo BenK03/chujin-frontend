@@ -111,35 +111,47 @@
     <script src="../script.js"></script>
 </main>
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    fetch("https://chujin-backend-gcs1.onrender.com/api/press")
-      .then(res => res.json())
-      .then(pressItems => {
-        const container = document.querySelector('.slideshow-container');
-        container.innerHTML = '';
-        pressItems.slice().reverse().forEach(p => {
-          const link = document.createElement('a');
-          link.href = `./press-detail.html?id=${p.id}`;
+document.addEventListener('DOMContentLoaded', () => {
+  fetch("https://chujin-backend-gcs1.onrender.com/api/press")
+    .then(res => res.json())
+    .then(pressItems => {
+      const container = document.querySelector('.slideshow-container');
+      container.innerHTML = '';
 
-          link.className = 'slide-link';
-          link.innerHTML = `
-            <div class="slide">
-              <article class="insight-article">
-                <div class="insight-meta">
-                  🗂️ <strong>Category:</strong> ${p.category}
-                  📝 <strong>Subject:</strong> ${p.subject}
-                  ⏰ <strong>Time:</strong> ${p.time}
-                  👤 <strong>Author:</strong> ${p.author}
-                  🔗 <strong>Link:</strong> <a href="${p.hyperlink}" target="_blank" rel="noopener noreferrer">Visit</a>
-                </div>
-              </article>
-            </div>
+      pressItems.slice().reverse().forEach(p => {
+        const slideLink = document.createElement('a');
+        slideLink.href      = `./press-detail.html?id=${p.id}`;
+        slideLink.className = 'slide-link';
+
+        // Only show the Link line if there’s actually a URL
+        let linkSection = '';
+        if (p.hyperlink && p.hyperlink.trim()) {
+          linkSection = `
+            🔗 <strong>Link:</strong>
+            <a href="${p.hyperlink}" target="_blank" rel="noopener noreferrer">
+              ${p.hyperlink}
+            </a>
           `;
-          container.appendChild(link);
-        });
-      })
-      .catch(err => console.error('Error loading press releases:', err));
-  });
+        }
+
+        slideLink.innerHTML = `
+          <div class="slide">
+            <article class="insight-article">
+              <div class="insight-meta">
+                🗂️ <strong>Category:</strong> ${p.category}
+                📝 <strong>Subject:</strong> ${p.subject}
+                ⏰ <strong>Time:</strong> ${p.time}
+                👤 <strong>Author:</strong> ${p.author}
+                ${linkSection}
+              </div>
+            </article>
+          </div>
+        `;
+        container.appendChild(slideLink);
+      });
+    })
+    .catch(err => console.error('Error loading press releases:', err));
+});
 </script>
 
 </body>
